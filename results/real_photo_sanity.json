@@ -1,0 +1,488 @@
+{
+ "topics": [
+  "battery",
+  "camera",
+  "delivery",
+  "food",
+  "other",
+  "packaging",
+  "performance",
+  "price",
+  "screen",
+  "service",
+  "sound"
+ ],
+ "n_photos": 48,
+ "n_extra_photos": 18,
+ "chance": 12.5,
+ "accuracy_photo_only": {
+  "trained": 16.666666666666668,
+  "clip": 79.16666666666667,
+  "clip_11_topics": 75.0
+ },
+ "accuracy_extra_topics_11": 72.22222222222223,
+ "rows": [
+  {
+   "label": "battery",
+   "file": "File:Samsung smartphone battery, Hillegersberg, Rotterdam (2022) 03.jpg",
+   "trained": "camera",
+   "clip8": "battery",
+   "clip11": "battery"
+  },
+  {
+   "label": "battery",
+   "file": "File:Samsung smartphone battery, Hillegersberg, Rotterdam (2022) 04.jpg",
+   "trained": "camera",
+   "clip8": "battery",
+   "clip11": "battery"
+  },
+  {
+   "label": "battery",
+   "file": "File:Samsung smartphone battery, Hillegersberg, Rotterdam (2022) 07.jpg",
+   "trained": "camera",
+   "clip8": "battery",
+   "clip11": "battery"
+  },
+  {
+   "label": "battery",
+   "file": "File:Samsung smartphone battery, Hillegersberg, Rotterdam (2022) 08.jpg",
+   "trained": "camera",
+   "clip8": "battery",
+   "clip11": "battery"
+  },
+  {
+   "label": "battery",
+   "file": "File:Canon LP-EL BATTERY PACK (2).jpg",
+   "trained": "camera",
+   "clip8": "battery",
+   "clip11": "battery"
+  },
+  {
+   "label": "battery",
+   "file": "File:Lucid battery pack - detail.jpg",
+   "trained": "packaging",
+   "clip8": "battery",
+   "clip11": "battery"
+  },
+  {
+   "label": "screen",
+   "file": "File:A cracked telephone screen.jpg",
+   "trained": "screen",
+   "clip8": "screen",
+   "clip11": "screen"
+  },
+  {
+   "label": "screen",
+   "file": "File:MyPhone my27 front panel.jpg",
+   "trained": "camera",
+   "clip8": "screen",
+   "clip11": "screen"
+  },
+  {
+   "label": "screen",
+   "file": "File:Samsung Galaxy S2 shattered screen.jpg",
+   "trained": "camera",
+   "clip8": "screen",
+   "clip11": "screen"
+  },
+  {
+   "label": "screen",
+   "file": "File:Smartphone cracked screen.jpg",
+   "trained": "camera",
+   "clip8": "screen",
+   "clip11": "screen"
+  },
+  {
+   "label": "screen",
+   "file": "File:8 LCD monitor Wien Hbf 080916.jpg",
+   "trained": "camera",
+   "clip8": "delivery",
+   "clip11": "delivery"
+  },
+  {
+   "label": "screen",
+   "file": "File:EIZO Foris FG2421 VGA computer monitor displaying test pattern.png",
+   "trained": "camera",
+   "clip8": "screen",
+   "clip11": "screen"
+  },
+  {
+   "label": "camera",
+   "file": "File:12 MP digital camera - red.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "camera",
+   "file": "File:GE Digital Camera X5.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "camera",
+   "file": "File:Leica M (Typ 262) back.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "camera",
+   "file": "File:Sony Cybershot DSC W210.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "camera",
+   "file": "File:Canon EF 100mm f2.8L Macro IS USM front horizontal.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "camera",
+   "file": "File:Emitar lens 02.jpg",
+   "trained": "sound",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "price",
+   "file": "File:Dual Price Labels - Leva and Euro 02.jpg",
+   "trained": "camera",
+   "clip8": "packaging",
+   "clip11": "food"
+  },
+  {
+   "label": "price",
+   "file": "File:Dual Price Labels - Leva and Euro 06.jpg",
+   "trained": "packaging",
+   "clip8": "packaging",
+   "clip11": "packaging"
+  },
+  {
+   "label": "price",
+   "file": "File:Price Building illuminated at night in Quebec City.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "other"
+  },
+  {
+   "label": "price",
+   "file": "File:1000 Cash - Chang Feng Money Shop (Daoguang 13 - 1850).jpg",
+   "trained": "screen",
+   "clip8": "price",
+   "clip11": "price"
+  },
+  {
+   "label": "price",
+   "file": "File:American Cash.JPG",
+   "trained": "screen",
+   "clip8": "price",
+   "clip11": "price"
+  },
+  {
+   "label": "price",
+   "file": "File:Antique cash register in a cafe, Darjeeling.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "delivery",
+   "file": "File:Rivian EDV-500 front.jpg",
+   "trained": "camera",
+   "clip8": "delivery",
+   "clip11": "delivery"
+  },
+  {
+   "label": "delivery",
+   "file": "File:Rivian EDV-500 rear.jpg",
+   "trained": "camera",
+   "clip8": "delivery",
+   "clip11": "delivery"
+  },
+  {
+   "label": "delivery",
+   "file": "File:Rivian EDV-700 front.jpg",
+   "trained": "camera",
+   "clip8": "delivery",
+   "clip11": "delivery"
+  },
+  {
+   "label": "delivery",
+   "file": "File:Rivian EDV-700 rear.jpg",
+   "trained": "camera",
+   "clip8": "delivery",
+   "clip11": "delivery"
+  },
+  {
+   "label": "delivery",
+   "file": "File:A Courier Delivering a Parcel.jpg",
+   "trained": "screen",
+   "clip8": "delivery",
+   "clip11": "delivery"
+  },
+  {
+   "label": "delivery",
+   "file": "File:A Woman Signing for a Parcel Delivery.jpg",
+   "trained": "screen",
+   "clip8": "delivery",
+   "clip11": "delivery"
+  },
+  {
+   "label": "packaging",
+   "file": "File:Flipper Zero retail cardboard packaging box top view.jpg",
+   "trained": "camera",
+   "clip8": "packaging",
+   "clip11": "packaging"
+  },
+  {
+   "label": "packaging",
+   "file": "File:Original packaging, cardboard box for the Mettoy Minor toy typewriter.jpg",
+   "trained": "camera",
+   "clip8": "packaging",
+   "clip11": "packaging"
+  },
+  {
+   "label": "packaging",
+   "file": "File:Original packaging, cardboard box for the Mettoy Minor toy typewriter end or side view.jpg",
+   "trained": "camera",
+   "clip8": "packaging",
+   "clip11": "food"
+  },
+  {
+   "label": "packaging",
+   "file": "File:Original packaging, cardboard box for the Mettoy Minor toy typewriter with instructions for use.jpg",
+   "trained": "packaging",
+   "clip8": "battery",
+   "clip11": "food"
+  },
+  {
+   "label": "packaging",
+   "file": "File:The Adventure Girls - Box set 1b.jpg",
+   "trained": "performance",
+   "clip8": "packaging",
+   "clip11": "packaging"
+  },
+  {
+   "label": "packaging",
+   "file": "File:The Adventure Girls - Box set 2f.jpg",
+   "trained": "packaging",
+   "clip8": "battery",
+   "clip11": "battery"
+  },
+  {
+   "label": "sound",
+   "file": "File:2016 Kolumna g\u0142o\u015bnikowa Altus 110.jpg",
+   "trained": "camera",
+   "clip8": "sound",
+   "clip11": "sound"
+  },
+  {
+   "label": "sound",
+   "file": "File:James Hetfield with Metallica -- 7 October 2004.jpg",
+   "trained": "screen",
+   "clip8": "sound",
+   "clip11": "food"
+  },
+  {
+   "label": "sound",
+   "file": "File:Man at Dundas subway station, Toronto, 2008-05-06.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "sound",
+   "file": "File:Sony MDR CD30 - loudspeaker-8977.jpg",
+   "trained": "camera",
+   "clip8": "performance",
+   "clip11": "performance"
+  },
+  {
+   "label": "sound",
+   "file": "File:Bose QuietComfort 25 Acoustic Noise Cancelling Headphones with Carry Case.jpg",
+   "trained": "camera",
+   "clip8": "sound",
+   "clip11": "sound"
+  },
+  {
+   "label": "sound",
+   "file": "File:Headphones 1.jpg",
+   "trained": "camera",
+   "clip8": "sound",
+   "clip11": "sound"
+  },
+  {
+   "label": "performance",
+   "file": "File:BMW R26 1960 Tacho.jpg",
+   "trained": "camera",
+   "clip8": "performance",
+   "clip11": "performance"
+  },
+  {
+   "label": "performance",
+   "file": "File:NSU-LUX 1952 Speedometer.jpg",
+   "trained": "camera",
+   "clip8": "performance",
+   "clip11": "performance"
+  },
+  {
+   "label": "performance",
+   "file": "File:Veglia-Borletti-Tacho einer Vespa (Sp 2).JPG",
+   "trained": "camera",
+   "clip8": "performance",
+   "clip11": "performance"
+  },
+  {
+   "label": "performance",
+   "file": "File:Z\u00fcndapp Bella R 154 (2008-05-21 Sp) Armaturenbrett r.JPG",
+   "trained": "camera",
+   "clip8": "performance",
+   "clip11": "performance"
+  },
+  {
+   "label": "performance",
+   "file": "File:2023 Intel Core i7 12700KF (3).jpg",
+   "trained": "packaging",
+   "clip8": "performance",
+   "clip11": "performance"
+  },
+  {
+   "label": "performance",
+   "file": "File:CPU processor coolant (2026).jpg",
+   "trained": "screen",
+   "clip8": "packaging",
+   "clip11": "packaging"
+  },
+  {
+   "label": "food",
+   "file": "File:Eq it-na pizza-margherita sep2005 sml.jpg",
+   "trained": "packaging",
+   "clip8": "performance",
+   "clip11": "food"
+  },
+  {
+   "label": "food",
+   "file": "File:L&B Spumoni Gardens pizza (41436).jpg",
+   "trained": "camera",
+   "clip8": "price",
+   "clip11": "food"
+  },
+  {
+   "label": "food",
+   "file": "File:Pizza 2023.jpg",
+   "trained": "camera",
+   "clip8": "packaging",
+   "clip11": "food"
+  },
+  {
+   "label": "food",
+   "file": "File:Vegetarian Pizza.jpg",
+   "trained": "sound",
+   "clip8": "screen",
+   "clip11": "food"
+  },
+  {
+   "label": "food",
+   "file": "File:Chicken Quesadilla dish at Latin Bistro restaurant Summit NJ.JPG",
+   "trained": "camera",
+   "clip8": "packaging",
+   "clip11": "food"
+  },
+  {
+   "label": "food",
+   "file": "File:Indian lamb dish at restaurant Namaskaar Express, Helsinki railway station, Finland.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "food"
+  },
+  {
+   "label": "service",
+   "file": "File:Exam time queue university library Aarhus 01.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "service",
+   "file": "File:Exam time queue university library Aarhus 02.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "service",
+   "file": "File:Queue for the trophy (3785732961).jpg",
+   "trained": "camera",
+   "clip8": "sound",
+   "clip11": "service"
+  },
+  {
+   "label": "service",
+   "file": "File:A-waiter-serving-the-food-in-the-restaurant-142438919456.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "food"
+  },
+  {
+   "label": "service",
+   "file": "File:Hacker-Pschorr Oktoberfest Girl Remix.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "other"
+  },
+  {
+   "label": "service",
+   "file": "File:Our waiter in Zanzibar.jpg",
+   "trained": "camera",
+   "clip8": "delivery",
+   "clip11": "service"
+  },
+  {
+   "label": "other",
+   "file": "File:Mountains in snow, Mountain lake, Chola Valley, Nepal, Himalayas.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "camera"
+  },
+  {
+   "label": "other",
+   "file": "File:Paul Bril - Mountain Scene - WGA3197.jpg",
+   "trained": "camera",
+   "clip8": "delivery",
+   "clip11": "other"
+  },
+  {
+   "label": "other",
+   "file": "File:Paul Bril 002.jpg",
+   "trained": "camera",
+   "clip8": "delivery",
+   "clip11": "other"
+  },
+  {
+   "label": "other",
+   "file": "File:Zagedan Lakes, Mountain cirque, Caucasus Mountains.jpg",
+   "trained": "packaging",
+   "clip8": "camera",
+   "clip11": "other"
+  },
+  {
+   "label": "other",
+   "file": "File:Cat November 2010-1a.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "other"
+  },
+  {
+   "label": "other",
+   "file": "File:Cat playing with a lizard.jpg",
+   "trained": "camera",
+   "clip8": "camera",
+   "clip11": "other"
+  }
+ ]
+}

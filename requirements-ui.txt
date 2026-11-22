@@ -1,0 +1,7 @@
+# Packages needed to run the UI / demo and generate the dataset
+torch>=2.0
+numpy
+Pillow>=10.1
+# real-photo mode (pretrained CLIP + caption sentiment)
+open_clip_torch
+vaderSentiment

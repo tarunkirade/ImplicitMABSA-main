@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ImplicitMABSA</title>
+<style>
+:root{
+  --paper:#f6f2e9; --card:#fffdf8; --ink:#1f1d19; --muted:#6c675c; --faint:#9a9486; --line:#e6dfd0; --soft:#f0eadc;
+  --accent:#d9482b; --text:#2a7f62; --image:#c98512; --fuse:#2a52be;
+  --neg:#c9334a; --neu:#7d8696; --pos:#2a8a57; --okbg:#e4f3ea; --badbg:#fbe6e9; --hl:#fff1b8;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{--paper:#141310;--card:#1d1b16;--ink:#f1ece0;--muted:#a8a190;--faint:#7c7667;--line:#33302a;--soft:#26231d;
+        --okbg:#14301f;--badbg:#3a1920;--hl:#5a4a10;--text:#4fc09a;--image:#e5a93a;--fuse:#7b9bff;--accent:#ff6d4d}
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:28px}
+.logo{font-family:var(--serif);font-size:21px;font-weight:700;display:flex;align-items:center;gap:10px}
+.logo i{display:inline-block;width:22px;height:22px;border-radius:50%;background:linear-gradient(90deg,var(--text) 50%,var(--accent) 50%);position:relative}
+.logo i::after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--paper)}
+.tabs{display:flex;gap:4px;margin-left:auto}
+.tabs button{all:unset;cursor:pointer;padding:7px 15px;border-radius:99px;font-weight:600;color:var(--muted);font-size:15px}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{background:var(--ink);color:var(--paper)}
+main{max-width:1120px;margin:0 auto;padding:34px 24px 80px}
+.page{display:none}.page.on{display:block;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(5px)}to{opacity:1}}
+.lead{margin:0 0 26px;max-width:700px}
+.lead h1{font-size:34px;line-height:1.15;margin-bottom:10px}
+.lead p{margin:0;color:var(--muted);font-size:17px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.two{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:22px;align-items:start}
+@media(max-width:860px){.two{grid-template-columns:1fr}.tabs{margin-left:0}.top-in{flex-wrap:wrap;gap:10px}}
+.step{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:10px}
+/* controls */
+.btn{border:0;background:var(--accent);color:#fff;font-weight:650;padding:11px 22px;border-radius:12px;cursor:pointer;font-size:15.5px}
+.btn:hover{filter:brightness(1.07)}.btn:disabled{opacity:.5;cursor:default}
+.btn.line{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.line:hover{border-color:var(--ink)}
+.btn.sm{padding:7px 14px;font-size:14px;border-radius:10px}
+.seg{display:inline-flex;background:var(--soft);border-radius:11px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{all:unset;cursor:pointer;padding:6px 14px;border-radius:8px;font-size:14px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+select,input[type=search],textarea{background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:8px 12px;outline:none}
+select:focus,input:focus,textarea:focus{border-color:var(--accent)}
+textarea{width:100%;resize:vertical;min-height:78px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.chip{all:unset;cursor:pointer;font-size:13px;padding:3px 11px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.chip:hover{border-color:var(--ink);color:var(--ink)}
+.drop{border:2px dashed var(--line);border-radius:16px;min-height:200px;display:grid;place-items:center;text-align:center;color:var(--muted);cursor:pointer;background:var(--soft);padding:12px;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--accent);color:var(--ink)}
+.drop img{max-width:100%;max-height:250px;border-radius:12px;image-rendering:auto}
+.drop img.px{image-rendering:pixelated}
+.tweet{background:var(--soft);border-radius:12px;padding:12px 14px;font-size:15px;overflow-wrap:anywhere}
+mark{background:var(--hl);color:inherit;border-radius:4px;padding:0 3px}
+.err{color:var(--neg);font-size:14px}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12.5px;font-weight:650;background:var(--soft);color:var(--muted);white-space:nowrap}
+.t-neg{color:var(--neg);background:color-mix(in srgb,var(--neg) 13%,transparent)}
+.t-neu{color:var(--neu);background:color-mix(in srgb,var(--neu) 16%,transparent)}
+.t-pos{color:var(--pos);background:color-mix(in srgb,var(--pos) 14%,transparent)}
+.t-asp{color:var(--fuse);background:color-mix(in srgb,var(--fuse) 12%,transparent)}
+.t-warn{color:#a56a00;background:#fff0c9}
+.ok{color:var(--pos);font-weight:700}.no{color:var(--neg);font-weight:700}
+/* answer */
+.answer{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.big{background:var(--soft);border-radius:16px;padding:16px 18px}
+.big small{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.big b{display:block;font-family:var(--serif);font-size:32px;line-height:1.15;text-transform:capitalize;margin:2px 0}
+.meter{height:6px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;border-radius:4px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.who{margin-top:20px}
+.who h4{margin:0 0 8px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.line3{display:grid;grid-template-columns:20px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid var(--line);margin-bottom:8px}
+.line3.main{border-color:var(--fuse);background:color-mix(in srgb,var(--fuse) 7%,transparent)}
+.line3 .sw{width:12px;height:12px;border-radius:4px}
+.line3 .nm{font-weight:650}.line3 .nm span{font-weight:400;color:var(--muted)}
+.read{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--soft);font-size:15px}
+.note{margin-top:14px;padding:11px 14px;border-radius:12px;background:color-mix(in srgb,var(--image) 14%,transparent);font-size:14px}
+details{margin-top:14px}summary{cursor:pointer;color:var(--muted);font-size:14px;font-weight:600}
+.pb{display:grid;grid-template-columns:90px 1fr 38px;gap:8px;align-items:center;font-size:13px;color:var(--muted);margin:3px 0}
+.pb .tr{height:7px;background:var(--line);border-radius:4px;overflow:hidden}.pb .tr i{display:block;height:100%;background:var(--fuse);border-radius:4px}
+.how{margin-top:26px}
+.how .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+@media(max-width:700px){.how .steps,.answer{grid-template-columns:1fr}}
+.how .s{background:var(--soft);border-radius:14px;padding:14px;font-size:14.5px;color:var(--muted)}
+.how .s b{color:var(--ink);display:block;margin-bottom:2px}
+.empty{color:var(--faint);text-align:center;padding:60px 10px}
+/* data */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:18px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;grid-template-columns:72px 1fr;gap:12px;cursor:pointer;transition:.15s}
+.item:hover{border-color:var(--ink);transform:translateY(-2px)}
+.thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;background:var(--soft);image-rendering:pixelated}
+.thumb.real{image-rendering:auto}
+.thumb.missing{display:grid;place-items:center;font-size:11px;color:var(--faint);text-align:center}
+.item p{margin:0 0 6px;font-size:14px;line-height:1.35;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.item .tags{display:flex;gap:5px;flex-wrap:wrap}
+.pager{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:24px;color:var(--muted)}
+.modal{position:fixed;inset:0;background:rgba(10,8,4,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.modal.on{display:flex}
+.sheet{background:var(--card);border-radius:20px;max-width:680px;width:100%;max-height:92vh;overflow:auto;padding:24px;display:grid;grid-template-columns:220px 1fr;gap:22px}
+.sheet img{width:220px;border-radius:14px;image-rendering:pixelated}.sheet img.real{image-rendering:auto}
+@media(max-width:640px){.sheet{grid-template-columns:1fr}.sheet img{width:100%}}
+.banner{margin-top:16px;padding:12px 16px;border-radius:12px;background:color-mix(in srgb,var(--image) 14%,transparent);font-size:14.5px}
+.mono{font-family:Consolas,"Cascadia Mono",monospace;font-size:13px;background:var(--soft);padding:1px 6px;border-radius:6px}
+/* results */
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700}
+tr.hl td{font-weight:700;background:color-mix(in srgb,var(--fuse) 7%,transparent)}
+td.bar{width:34%;min-width:140px}
+.fbar{display:flex;align-items:center;gap:10px}.fbar .tr{flex:1;height:9px;border-radius:5px;background:var(--line);overflow:hidden}.fbar .tr i{display:block;height:100%;border-radius:5px}.fbar b{width:42px;text-align:right}
+.take{margin-top:18px;padding:16px 18px;border-radius:14px;background:var(--soft);font-size:16px}
+.take b{font-family:var(--serif);font-size:17px}
+.scroll{overflow-x:auto}
+.sd{color:var(--faint);font-weight:400;font-size:12.5px}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;animation:sp .7s linear infinite;display:inline-block;vertical-align:-3px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.small{font-size:14px;color:var(--muted)}
+.hm{position:relative;display:inline-block;width:150px;vertical-align:top;margin:0 10px 6px 0}
+.hm img{width:150px;height:150px;object-fit:cover;border-radius:8px;display:block;image-rendering:auto}
+.hm .g{position:absolute;inset:0;display:grid;border-radius:8px;overflow:hidden}
+.hm .g i{background:rgba(214,70,40,var(--a));border:1px solid rgba(255,255,255,.25)}
+.hm span{display:block;font-size:13px;color:var(--muted);margin-top:4px}
+.wd{display:inline-block;padding:2px 6px;margin:2px;border-radius:5px;font-size:14px;background:rgba(214,70,40,var(--a))}
+.live{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,#2a9d5c 18%,transparent);color:#2a9d5c;font-weight:600}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="logo"><i></i>ImplicitMABSA</div>
+  <nav class="tabs" id="tabs">
+    <button data-p="try" class="on">Try it</button><button data-p="data">Browse data</button><button data-p="results">Results</button>
+  </nav>
+  <button class="btn line sm" id="quit" title="Stop the app and go back to the menu">Quit app</button>
+</div></header>
+
+<main>
+<!-- ================= TRY IT ================= -->
+<section class="page on" id="p-try">
+  <div class="lead">
+    <h1>What is this post about, and how does the writer feel?</h1>
+    <p>Give the model a photo and a caption. It works out <b>which part of a product</b> the post is about — even when the caption never says it — and whether the feeling is <b>positive, negative or neutral</b>.</p>
+  </div>
+  <div class="two">
+    <div class="card">
+      <div class="step">1 · Photo</div>
+      <div class="drop" id="drop"><div><b>Drop a photo here</b><br>or click to choose one</div></div>
+      <input type="file" id="file" accept="image/*" hidden>
+      <div class="row" style="margin-top:12px">
+        <button class="btn line sm" id="rand">🎲 Try a random example</button>
+        <div class="seg" id="src"><button data-v="synthetic" class="on">Generated</button><button data-v="real">Real tweets</button></div>
+      </div>
+      <div class="row" style="margin-top:14px"><span class="small">Analyse with</span><div class="seg" id="eng"><button data-v="clip" class="on">Real-photo mode</button><button data-v="trained">Trained model</button></div></div>
+      <div class="small" id="eng-note" style="margin-top:6px"></div>
+      <div class="step" style="margin-top:22px">2 · Caption</div>
+      <textarea id="txt" placeholder="e.g. Not what I expected!"></textarea>
+      <div class="chips" id="ex"></div>
+      <div class="row" style="margin-top:18px"><button class="btn" id="go">Analyse</button><span class="err" id="p-err"></span></div>
+    </div>
+    <div id="out"><div class="card empty">Pick a photo and write a caption,<br>or press <b>Try a random example</b>.</div></div>
+  </div>
+  <details class="how"><summary>New here? How this works</summary>
+    <div class="steps">
+      <div class="s"><b>1. It reads both</b>The caption becomes numbers (word by word); the photo becomes numbers (small patches).</div>
+      <div class="s"><b>2. It links them</b>Words look at the parts of the photo that matter, and the photo looks back at the words.</div>
+      <div class="s"><b>3. It answers</b>One guess among 8 topics — battery, screen, camera, price, delivery, packaging, sound, performance — plus the feeling.</div>
+    </div>
+    <p class="small" style="margin-top:12px">“Generated” examples come from a dataset made by a script, so the true answer is known. “Real tweets” are genuine posts (Twitter-2015/2017); for those the model only judges the feeling, because real tweets have no topic labels.</p>
+  </details>
+</section>
+
+<!-- ================= DATA ================= -->
+<section class="page" id="p-data">
+  <div class="lead"><h1>Browse the data</h1><p id="d-desc"></p></div>
+  <div class="row">
+    <div class="seg" id="d-src"><button data-v="synthetic" class="on">Generated · 8,000</button><button data-v="real">Real tweets</button></div>
+    <select id="d-split"><option value="">All sets</option><option value="train">Training</option><option value="val">Validation</option><option value="test_iid">Test · familiar wording</option><option value="test_ood">Test · new wording</option></select>
+    <select id="d-year" style="display:none"><option value="">Both years</option><option>2015</option><option>2017</option></select>
+    <select id="d-aspect"><option value="">Any topic</option></select>
+    <select id="d-sent"><option value="">Any feeling</option><option>negative</option><option>neutral</option><option>positive</option></select>
+    <input type="search" id="d-q" placeholder="Search captions…">
+    <span class="small" id="d-count" style="margin-left:auto"></span>
+  </div>
+  <div id="d-banner"></div>
+  <div class="grid" id="grid"></div>
+  <div class="pager"><button class="btn line sm" id="prev">← Previous</button><span id="pg"></span><button class="btn line sm" id="next">Next →</button></div>
+</section>
+
+<!-- ================= RESULTS ================= -->
+<section class="page" id="p-results">
+  <div class="lead"><h1>How well does it work?</h1><p>Models are compared on accuracy, precision, recall and F1. F1 is the single best number to look at: it balances precision and recall, and 100 is perfect.</p></div>
+  <div class="row" style="margin-bottom:18px">
+    <div class="seg" id="r-src"><button data-v="synthetic" class="on">Generated benchmark</button><button data-v="real">Real tweets</button></div>
+    <div class="seg" id="r-a"></div><div class="seg" id="r-b"></div>
+    <label class="small" id="r-abl-w" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="r-abl"> include ablations</label>
+  </div>
+  <div class="card scroll" id="r-table"></div>
+  <div class="take" id="r-take"></div>
+  <div class="card" style="margin-top:22px" id="r-live"></div>
+</section>
+</main>
+
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const lab = a => a === 'other' ? 'something else' : a;
+const pct = x => Math.round(x * 100) + '%', f1 = (x, d = 1) => x == null ? '–' : (+x).toFixed(d);
+const ASPECTS = ['battery','screen','camera','price','delivery','packaging','sound','performance'];
+const SENT = ['negative','neutral','positive'];
+const SC = {negative:'t-neg', neutral:'t-neu', positive:'t-pos'}, SCOL = {negative:'var(--neg)', neutral:'var(--neu)', positive:'var(--pos)'};
+const api = async (u, body) => {
+  const r = await fetch(u, body ? {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)} : undefined);
+  const j = await r.json().catch(() => ({error:'Bad response'}));
+  if (!r.ok) throw new Error(j.error || r.statusText);
+  return j;
+};
+const seg = (el, items, cur, cb) => {
+  el.innerHTML = items.map(([v, l]) => `<button data-v="${v}" class="${v === cur ? 'on' : ''}">${l}</button>`).join('');
+  el.onclick = e => { const b = e.target.closest('button'); if (!b) return; [...el.children].forEach(x => x.classList.toggle('on', x === b)); cb(b.dataset.v); };
+};
+const segVal = el => el.querySelector('.on').dataset.v;
+const tweetHTML = s => esc(s.text).replace('$T$', `<mark>${esc(s.target)}</mark>`);
+
+/* ---------- navigation ---------- */
+function go(p){
+  $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  $$('.page').forEach(s => s.classList.toggle('on', s.id === 'p-' + p));
+  window.scrollTo(0, 0);
+  if (p === 'data') loadData();
+  if (p === 'results') drawResults();
+}
+$('#tabs').onclick = e => { const b = e.target.closest('button'); if (b) go(b.dataset.p); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('#modal').classList.remove('on'); });
+$('#modal').onclick = e => { if (e.target.id === 'modal') $('#modal').classList.remove('on'); };
+
+/* ================= TRY IT ================= */
+let CUR = {kind: null};                       // {kind:'upload', url} | {kind:'syn', id} | {kind:'real', s}
+const EX = ['Not what I expected!', 'Dead by lunch again', 'Worth every penny'];
+$('#ex').innerHTML = EX.map(t => `<button class="chip">${esc(t)}</button>`).join('');
+$('#ex').onclick = e => { if (e.target.classList.contains('chip')) { $('#txt').value = e.target.textContent; if (CUR.kind === 'real') CUR = {kind: null}; } };
+let ENGINE = 'clip';
+const ENG_NOTE = {clip: 'For real photos of any object. Uses a pretrained CLIP model — no training on this project. Topics: the 8 product topics plus food, service and “something else”. The first analysis downloads ~350 MB, so it can take a minute.',
+                  trained: 'For the generated examples. Uses the model trained in this project on the generated dataset; it has never seen real photos.'};
+function setEngine(v){ ENGINE = v; seg($('#eng'), [['clip', 'Real-photo mode'], ['trained', 'Trained model']], v, x => { ENGINE = x; $('#eng-note').textContent = ENG_NOTE[x]; }); $('#eng-note').textContent = ENG_NOTE[v]; }
+setEngine('clip');
+const drop = $('#drop');
+drop.onclick = () => $('#file').click();
+drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+drop.ondragleave = () => drop.classList.remove('over');
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); };
+$('#file').onchange = e => { if (e.target.files[0]) readFile(e.target.files[0]); };
+function readFile(f){
+  if (!f.type.startsWith('image/')) { $('#p-err').textContent = 'Please choose an image file.'; return; }
+  const r = new FileReader(); r.onload = () => { setEngine('clip'); CUR = {kind: 'upload', url: r.result}; showImg(r.result, false); $('#txt').disabled = false; }; r.readAsDataURL(f);
+}
+function showImg(url, px){ drop.innerHTML = `<img class="${px ? 'px' : ''}" src="${url}" alt="">`; $('#p-err').textContent = ''; }
+seg($('#src'), [['synthetic', 'Generated'], ['real', 'Real tweets']], 'synthetic', () => {});
+$('#rand').onclick = async () => {
+  const src = segVal($('#src')), err = $('#p-err'); err.textContent = '';
+  try {
+    if (src === 'real') {
+      const first = await api('/api/real?page=1');
+      if (!first.total) { err.textContent = 'No real tweets installed.'; return; }
+      const d = await api('/api/real?page=' + (1 + Math.floor(Math.random() * first.pages)));
+      useReal(d.items[Math.floor(Math.random() * d.items.length)]);
+    } else {
+      const sp = ['test_iid', 'test_ood'][Math.floor(Math.random() * 2)];
+      const first = await api(`/api/dataset?split=${sp}&page=1`), d = await api(`/api/dataset?split=${sp}&page=${1 + Math.floor(Math.random() * first.pages)}`);
+      const c = d.items.filter(i => i.has_image);
+      if (!c.length) { err.textContent = 'Images not created yet — run  python run.py setup  once.'; return; }
+      useSyn(c[Math.floor(Math.random() * c.length)]);
+    }
+  } catch (e) { err.textContent = e.message; }
+};
+function useSyn(i){ setEngine('trained'); CUR = {kind: 'syn', id: i.id}; showImg('/api/image?id=' + i.id, true); $('#txt').value = i.text; $('#txt').disabled = false; $('#out').innerHTML = '<div class="card empty">Press <b>Analyse</b> to see what the model thinks.</div>'; }
+function useReal(s){
+  CUR = {kind: 'real', s}; showImg('/api/real_image?id=' + s.id, false);
+  $('#txt').value = s.text.replace('$T$', s.target); $('#txt').disabled = true; renderReal(s);
+}
+$('#go').onclick = async () => {
+  const err = $('#p-err'); err.textContent = '';
+  if (CUR.kind === 'real') { renderReal(CUR.s); return; }
+  if (!CUR.kind) { err.textContent = 'Choose a photo first.'; return; }
+  const text = $('#txt').value.trim(); if (!text) { err.textContent = 'Write a caption first.'; return; }
+  const b = $('#go'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Analysing' + (ENGINE === 'clip' ? ' (may take a minute the first time)' : '');
+  try { renderResult(await api('/api/predict', CUR.kind === 'syn' ? {id: CUR.id, text, engine: ENGINE} : {text, image_data_url: CUR.url, engine: ENGINE})); }
+  catch (e) { err.textContent = e.message; }
+  b.disabled = false; b.textContent = 'Analyse';
+};
+$('#quit').onclick = async () => {
+  if (!confirm('Stop the app? You will return to the menu in the black window.')) return;
+  try { await fetch('/api/quit', {method: 'POST', body: '{}'}); } catch (e) {}
+  document.body.innerHTML = '<main style="padding:60px 20px;text-align:center"><h1>App stopped</h1><p class="small">You can close this tab. Go back to the black window and pick another option from the menu.</p></main>';
+};
+function evidence(r){
+  const x = r.explain; if (!x) return '';
+  const mx = a => Math.max(0.02, ...a.flat().map(Math.abs));
+  const hm = (g, title) => { const m = mx(g), n = g.length; return `<div class="hm"><img src="${$('#drop img') ? $('#drop img').src : ''}" alt=""><div class="g" style="grid-template:repeat(${n},1fr)/repeat(${n},1fr)">${g.flat().map(v => `<i style="--a:${Math.max(0, v / m) * 0.75}"></i>`).join('')}</div><span>${title}</span></div>`; };
+  const wm = Math.max(0.02, ...x.words.map(w => Math.max(Math.abs(w.aspect), Math.abs(w.sentiment))));
+  const words = k => x.words.map(w => `<span class="wd" style="--a:${Math.max(0, w[k] / wm) * 0.6}">${esc(w.w)}</span>`).join('');
+  const m = x.matched_topic_prompt ? `<p class="small">Closest description of the photo for the topic: “${esc(x.matched_topic_prompt)}” (similarity ${x.matched_topic_sim.toFixed(2)}); for the feeling: “${esc(x.matched_feeling_prompt)}” (${x.matched_feeling_sim.toFixed(2)}).</p>` : '';
+  return `<details open><summary><span class="live">computed live</span> Show the evidence — what the decision was based on</summary><div style="margin-top:10px">
+    <p class="small">This answer was calculated just now from <b>your</b> photo and caption by <b>${esc(x.model)}</b> (${x.params.toLocaleString()} numbers/parameters), in ${r.timing.decide_ms.toFixed(0)} ms. There is no table of stored answers: the app has no lookup of photo → label. To check, change one word of the caption or swap the photo and press Analyse again — the answer changes.</p>
+    <p class="small"><b>How we know what mattered:</b> we hide one part of the photo (grey square) or one word at a time and re-run the model. Red = the answer got less sure when that part was hidden, i.e. the model relied on it (took ${r.timing.explain_ms.toFixed(0)} ms).</p>
+    <div>${hm(x.aspect_drop, 'matters for the topic')}${hm(x.sentiment_drop, 'matters for the feeling')}</div>
+    <div class="small" style="margin-top:6px">Words that matter for the topic</div><div>${words('aspect')}</div>
+    <div class="small" style="margin-top:6px">Words that matter for the feeling</div><div>${words('sentiment')}</div>${m}</div></details>`;
+}
+function mark(ok){ return ok == null ? '' : `<span class="${ok ? 'ok' : 'no'}">${ok ? '✓' : '✗'}</span>`; }
+function renderResult(r){
+  const B = r.both, T = r.text, I = r.image, t = r.truth;
+  const LOW = 0.45, topic = R => R.aspect_conf < LOW ? '<i>no clear topic</i>' : lab(R.aspect), feel = R => R.sentiment_conf < LOW ? '<i>no clear feeling</i>' : R.sentiment;
+  const row = (R, label, col, main) => `<div class="line3 ${main ? 'main' : ''}"><i class="sw" style="background:${col}"></i><div class="nm">${label} <span>→ ${topic(R)} · ${feel(R)}</span></div><div>${t ? mark(R.aspect === t.aspect) + ' ' + mark(R.sentiment === t.sentiment) : ''}</div></div>`;
+  const notes = [];
+  if (r.explicit_terms.length) notes.push(`<div class="note"><b>Heads up:</b> your caption names the topic (${r.explicit_terms.map(esc).join(', ')}), so it isn't hidden any more. Try rewording it.</div>`);
+  if (r.sarcasm) notes.push(`<div class="note"><b>Possible sarcasm:</b> the caption sounds positive but the photo looks bad, so the feeling trusts the photo more.</div>`);
+  if (r.engine === 'clip') notes.push(`<div class="note" style="background:color-mix(in srgb,var(--fuse) 10%,transparent)">Real-photo mode: a pretrained CLIP model reads the photo and the caption directly. It is a zero-shot guess, not trained on this project's data. Besides the 8 product topics it can also say food, service, or something else.</div>`);
+  if (r.unknown_tokens.length) notes.push(`<div class="note">The model doesn't know the word${r.unknown_tokens.length > 1 ? 's' : ''}: ${r.unknown_tokens.map(esc).join(', ')}.</div>`);
+  const why = [];
+  const explain = (what, k) => {
+    const conf = k + '_conf', t = T[k] === B[k] && T[conf] >= LOW, i = I[k] === B[k] && I[conf] >= LOW;
+    if (t && i) return;
+    const cl = T[conf] < LOW, pl = I[conf] < LOW;
+    if (t) why.push(`The ${what} comes from the <b>caption</b>${pl ? ' — the photo gives no clear ' + what : ' — the photo alone would say <b>' + I[k] + '</b>'}.`);
+    else if (i) why.push(`The ${what} comes from the <b>photo</b>${cl ? ' — the caption gives no clear ' + what : ' — the caption alone would say <b>' + T[k] + '</b>'}.`);
+    else why.push(`Neither input alone gives a clear ${what}; combining them gives <b>${lab(B[k])}</b>.`);
+  };
+  explain('topic', 'aspect'); explain('feeling', 'sentiment');
+  if (!why.length) why.push('Caption and photo agree, so every row gives the same answer.');
+  const bars = (p, col) => Object.entries(p).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => `<div class="pb"><span>${k}</span><div class="tr"><i style="width:${v * 100}%;background:${col || 'var(--fuse)'}"></i></div><span>${pct(v)}</span></div>`).join('');
+  $('#out').innerHTML = `<div class="card">
+    <div class="answer">
+      <div class="big"><small>It's about</small><b>${lab(B.aspect)}</b><span class="small">${pct(B.aspect_conf)} sure</span><div class="meter"><i style="width:${B.aspect_conf * 100}%;background:var(--fuse)"></i></div></div>
+      <div class="big"><small>The feeling is</small><b style="color:${SCOL[B.sentiment]}">${B.sentiment}</b><span class="small">${pct(B.sentiment_conf)} sure</span><div class="meter"><i style="width:${B.sentiment_conf * 100}%;background:${SCOL[B.sentiment]}"></i></div></div>
+    </div>
+    ${t ? `<div class="small" style="margin-top:10px">Correct answer: <span class="tag t-asp">${t.aspect}</span> <span class="tag ${SC[t.sentiment]}">${t.sentiment}</span></div>` : ''}
+    <div class="who"><h4>Who contributed?</h4>
+      ${row(T, 'Caption alone', 'var(--text)')}${row(I, 'Photo alone', 'var(--image)')}${row(B, 'Together', 'var(--fuse)', true)}
+    </div>
+    <div class="read">${why.join(' ')}</div>${notes.join('')}
+    ${evidence(r)}
+    <details><summary>Show the model's other guesses</summary><div style="margin-top:8px"><div class="small">Topic</div>${bars(B.aspect_probs)}<div class="small" style="margin-top:8px">Feeling</div>${bars(B.sentiment_probs, SCOL[B.sentiment])}</div></details>
+  </div>`;
+}
+function renderReal(s){
+  const idx = {negative: 0, neutral: 1, positive: 2}[s.label], P = s.probs;
+  const names = [['text', 'Caption alone', 'var(--text)'], ['image', 'Photo alone', 'var(--image)'], ['concat', 'Together (fusion)', 'var(--fuse)'], ['cross', 'Together (cross-modal)', 'var(--fuse)']];
+  const rows = names.map(([k, n, c]) => { const p = P[k], a = p.indexOf(Math.max(...p)); return `<div class="line3 ${k === 'cross' ? 'main' : ''}"><i class="sw" style="background:${c}"></i><div class="nm">${n} <span>→ <span class="tag ${SC[SENT[a]]}">${SENT[a]}</span> ${pct(p[a])}</span></div><div>${mark(a === idx)}</div></div>`; }).join('');
+  const right = names.filter(([k]) => P[k].indexOf(Math.max(...P[k])) === idx).length;
+  $('#out').innerHTML = `<div class="card">
+    <div class="step">Real tweet · Twitter-${s.year}</div>
+    <div class="tweet">${tweetHTML(s)}</div>
+    <div class="small" style="margin:8px 0 14px">The highlighted part is who/what the tweet's feeling is about. True feeling: <span class="tag ${SC[s.label]}">${s.label}</span></div>
+    <div class="who" style="margin-top:0"><h4>What each model said</h4>${rows}</div>
+    <div class="read">${right} of 4 models got it right. ${P.image.indexOf(Math.max(...P.image)) === idx && P.text.indexOf(Math.max(...P.text)) !== idx ? 'Here the photo helped.' : P.text.indexOf(Math.max(...P.text)) === idx && P.image.indexOf(Math.max(...P.image)) !== idx ? 'Here the caption alone was enough — typical for real tweets.' : ''}</div>
+    <div class="note">Real tweets have no “topic” labels, so only the <b>feeling</b> is judged. These predictions were computed ahead of time (saved in data/real/samples.json) by models run on these tweets — they are <b>not</b> computed live. To see a live decision, upload a photo and write a caption.</div></div>`;
+}
+
+/* ================= DATA ================= */
+let dPage = 1, dTimer;
+ASPECTS.forEach(a => $('#d-aspect').insertAdjacentHTML('beforeend', `<option>${a}</option>`));
+seg($('#d-src'), [['synthetic', 'Generated · 8,000'], ['real', 'Real tweets']], 'synthetic', () => { dPage = 1; loadData(); });
+async function loadData(){
+  const real = segVal($('#d-src')) === 'real';
+  $('#d-split').style.display = $('#d-aspect').style.display = real ? 'none' : '';
+  $('#d-year').style.display = real ? '' : 'none';
+  $('#d-desc').innerHTML = real ? 'Genuine tweets (Twitter-2015 and 2017) with their images. The highlighted word is what the sentiment is about.'
+    : 'Posts created by a script: a short caption plus a small image. The caption never names the topic, so the model has to infer it.';
+  const p = new URLSearchParams(real ? {year: $('#d-year').value, sentiment: $('#d-sent').value, q: $('#d-q').value, page: dPage}
+    : {split: $('#d-split').value, aspect: $('#d-aspect').value, sentiment: $('#d-sent').value, q: $('#d-q').value, page: dPage});
+  const d = await api((real ? '/api/real?' : '/api/dataset?') + p);
+  $('#d-count').textContent = d.total.toLocaleString() + ' shown'; $('#pg').textContent = `Page ${d.page} of ${d.pages}`;
+  $('#prev').disabled = d.page <= 1; $('#next').disabled = d.page >= d.pages;
+  const st = await api('/api/status');
+  $('#d-banner').innerHTML = !real && st.images_full === 0 ? `<div class="banner">Only a few sample images are installed. Run <span class="mono">python run.py setup</span> once (or <span class="mono">run.bat</span>) to create all 8,000.</div>` : '';
+  window._d = Object.fromEntries(d.items.map(i => [i.id, i]));
+  $('#grid').innerHTML = d.items.map(i => real
+    ? `<div class="item" data-id="${i.id}"><img class="thumb real" loading="lazy" src="/api/real_image?id=${i.id}" alt=""><div><p>${tweetHTML(i)}</p><div class="tags"><span class="tag ${SC[i.label]}">${i.label}</span><span class="tag">${i.year}</span></div></div></div>`
+    : `<div class="item" data-id="${i.id}">${i.has_image ? `<img class="thumb" loading="lazy" src="/api/image?id=${i.id}" alt="">` : '<div class="thumb missing">not created</div>'}<div><p>${esc(i.text)}</p><div class="tags"><span class="tag t-asp">${i.aspect}</span><span class="tag ${SC[i.sentiment]}">${i.sentiment}</span></div></div></div>`).join('')
+    || '<div class="empty" style="grid-column:1/-1">Nothing matches these filters.</div>';
+}
+['d-split', 'd-year', 'd-aspect', 'd-sent'].forEach(id => $('#' + id).onchange = () => { dPage = 1; loadData(); });
+$('#d-q').oninput = () => { clearTimeout(dTimer); dTimer = setTimeout(() => { dPage = 1; loadData(); }, 250); };
+$('#prev').onclick = () => { dPage--; loadData(); window.scrollTo(0, 0); };
+$('#next').onclick = () => { dPage++; loadData(); window.scrollTo(0, 0); };
+$('#grid').onclick = e => {
+  const c = e.target.closest('.item'); if (!c) return; const i = window._d[c.dataset.id], real = segVal($('#d-src')) === 'real';
+  const where = {T: 'the caption', I: 'the photo', B: 'both'};
+  $('#sheet').innerHTML = real
+    ? `<div><img class="real" src="/api/real_image?id=${i.id}" alt=""></div><div><div class="step">Real tweet · Twitter-${i.year}</div><div class="tweet">${tweetHTML(i)}</div><p class="small">True feeling: <span class="tag ${SC[i.label]}">${i.label}</span></p><div class="row"><button class="btn" id="m-go">See what the models said</button><button class="btn line" id="m-x">Close</button></div></div>`
+    : `<div>${i.has_image ? `<img src="/api/image?id=${i.id}" alt="">` : ''}</div><div><h3 style="font-size:22px;margin-bottom:10px">“${esc(i.text)}”</h3>
+       <p class="small">Topic: <span class="tag t-asp">${i.aspect}</span> — hinted by ${where[i.aspect_src]}<br>Feeling: <span class="tag ${SC[i.sentiment]}">${i.sentiment}</span> — hinted by ${where[i.sent_src]}${i.conflict ? '<br><span class="tag t-warn">caption and photo disagree on the feeling</span>' : ''}</p>
+       <div class="row"><button class="btn" id="m-go" ${i.has_image ? '' : 'disabled'}>Analyse this</button><button class="btn line" id="m-x">Close</button></div></div>`;
+  $('#modal').classList.add('on');
+  $('#m-x').onclick = () => $('#modal').classList.remove('on');
+  $('#m-go').onclick = () => { $('#modal').classList.remove('on'); go('try'); if (real) { seg($('#src'), [['synthetic', 'Generated'], ['real', 'Real tweets']], 'real', () => {}); useReal(i); } else { seg($('#src'), [['synthetic', 'Generated'], ['real', 'Real tweets']], 'synthetic', () => {}); useSyn(i); } };
+};
+
+/* ================= RESULTS ================= */
+let RES = null;
+const MODELS = {text:['Text only','var(--text)'], image:['Image only','var(--image)'], late:['Late fusion','#8b6bd6'], concat:['Concat fusion','#4f78d8'], cross:['Cross-modal (ours)','var(--fuse)'], cross_noasp:['  – no aspect link','#8aa0d6'], cross_nomd:['  – no modality dropout','#8aa0d6'], majority:['Always guess most common','var(--faint)'], clip:['Pretrained CLIP · zero-shot','#c2438a']};
+let R = {src: 'synthetic', a: 'test_iid', b: 'aspect', ry: '2015', rv: 'explicit'};
+seg($('#r-src'), [['synthetic', 'Generated benchmark'], ['real', 'Real tweets']], 'synthetic', v => { R.src = v; drawResults(); });
+$('#r-abl').onchange = drawResults;
+async function drawResults(){
+  if (!RES) RES = await api('/api/results');
+  const syn = R.src === 'synthetic';
+  $('#r-abl-w').style.display = syn ? 'flex' : 'none';
+  if (syn) {
+    seg($('#r-a'), [['test_iid', 'Familiar wording'], ['test_ood', 'New wording']], R.a, v => { R.a = v; drawResults(); });
+    seg($('#r-b'), [['aspect', 'Topic (8 classes)'], ['sentiment', 'Feeling (3 classes)']], R.b, v => { R.b = v; drawResults(); });
+  } else {
+    seg($('#r-a'), [['2015', 'Twitter-2015'], ['2017', 'Twitter-2017']], R.ry, v => { R.ry = v; drawResults(); });
+    seg($('#r-b'), [['explicit', 'Target shown'], ['masked', 'Target hidden']], R.rv, v => { R.rv = v; drawResults(); });
+  }
+  let rows = [];
+  if (syn) {
+    const M = RES.summary[R.a] || {}, abl = $('#r-abl').checked;
+    rows = ['text', 'image', 'late', 'concat', 'cross', ...(abl ? ['cross_noasp', 'cross_nomd'] : [])].filter(k => M[k]).map(k => ({k, acc: M[k][R.b + '_acc'], p: M[k][R.b + '_precision'], r: M[k][R.b + '_recall'], f: M[k][R.b + '_f1']}));
+    const C = RES.clip && RES.clip[R.a] && RES.clip[R.a].both && RES.clip[R.a].both[R.b];
+    if (C) rows.push({k: 'clip', acc: C.acc, p: C.precision, r: C.recall, f: C.f1});
+  } else {
+    const M = RES.real[`${R.ry}_${R.rv}`] || {};
+    rows = ['majority', 'text', 'image', 'late', 'concat', 'cross'].filter(k => M[k]).map(k => ({k, acc: M[k].acc, p: M[k].precision, r: M[k].recall, f: M[k].f1}));
+  }
+  const v = x => Array.isArray(x) ? `${f1(x[0])}<span class="sd"> ±${f1(x[1])}</span>` : f1(x), n = x => Array.isArray(x) ? x[0] : x;
+  $('#r-table').innerHTML = `<table><tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th colspan="1">F1</th></tr>${rows.map(o => `<tr class="${o.k === 'cross' ? 'hl' : ''}"><td>${MODELS[o.k][0]}</td><td>${v(o.acc)}</td><td>${v(o.p)}</td><td>${v(o.r)}</td><td class="bar"><div class="fbar"><div class="tr"><i style="width:${n(o.f)}%;background:${MODELS[o.k][1]}"></i></div><b>${f1(n(o.f))}</b></div></td></tr>`).join('')}</table>`;
+  $('#r-take').innerHTML = syn
+    ? (R.a === 'test_iid'
+      ? '<b>Both inputs together win by a lot.</b> Each input alone is only part of the story, so using the caption and the photo together gets close to perfect. Note this dataset was generated so that both are needed — it shows the method works, not real-world accuracy. The advanced cross-modal model is about equal to simple concatenation. The pink row is the pretrained CLIP real-photo engine: it was never trained on this data and the generated icons are not real photos, so it scores lower here — it is built for real photos (see below).'
+      : '<b>Brand-new wording is hard.</b> The model that reads only the caption falls apart on sentences it never saw, while models that also look at the photo hold up better. Better pretrained language models would help here.')
+    : '<b>On real tweets, the caption does most of the work.</b> Adding the photo does not reliably help, and the photo alone is weak. That is an honest, realistic finding — and exactly why the generated benchmark is used to study how combining the two really behaves. Scores are the average of 3 runs (± spread).';
+  const SN = RES.sanity && RES.sanity.n_photos ? RES.sanity : null;
+  $('#r-take').innerHTML += (syn && SN) ? `<div style="margin-top:14px"><b>Real photos.</b> On ${SN.n_photos} real photos (from Wikimedia Commons), looking at the photo alone: the trained model got the topic right <b>${f1(SN.accuracy_photo_only.trained, 0)}%</b> of the time (guessing = ${f1(SN.chance, 0)}%), the real-photo engine <b>${f1(SN.accuracy_photo_only.clip_11_topics, 0)}%</b> (${f1(SN.accuracy_photo_only.clip, 0)}% when limited to the 8 product topics). ${SN.n_extra_photos ? ` On ${SN.n_extra_photos} extra photos of food, queues and unrelated things, it picked the right one of its 11 topics <b>${f1(SN.accuracy_extra_topics_11, 0)}%</b> of the time.` : ''} This is a quick sanity check — labels come from search words — not a benchmark.</div>` : '';
+  const HD = RES.heads && RES.heads.synthetic && RES.heads.synthetic[R.a];
+  if (syn && HD) {
+    const nm = {text: 'Caption only', image: 'Photo only', late: 'Caption + photo (late)', concat: 'Caption + photo (concat)', fusion: 'Caption + photo (gated)'};
+    $('#r-take').innerHTML += `<div style="margin-top:14px"><b>Can we score higher?</b> Yes, for new wording. Re-training only small layers on top of frozen pretrained CLIP features (macro-F1 %, mean of 3 runs):<table class="tbl" style="margin-top:8px"><tr><th>Model</th><th>Topic F1</th><th>Feeling F1</th></tr>${Object.keys(nm).map(k => `<tr><td>${nm[k]}</td><td>${HD[k].aspect_f1[0].toFixed(1)}</td><td>${HD[k].sentiment_f1[0].toFixed(1)}</td></tr>`).join('')}</table><div class="small" style="margin-top:6px">With new wording this lifts topic F1 from about 69 to 87 and feeling F1 from about 66 to 81 (late fusion). On real tweets it does <b>not</b> help the caption model (about 57 vs 62 F1), though the photo-alone model improves (about 49 vs 39). So: better features fix unseen wording, not the hard part of real tweets.</div></div>`;
+  }
+  $('#r-live').style.display = syn ? '' : 'none';
+  $('#r-live').innerHTML = syn ? `<h3 style="font-size:20px;margin-bottom:4px">Check it yourself</h3><p class="small" style="margin:0 0 14px">Run the trained model on test images right now and compute the metrics live — the same as <span class="mono">python run.py evaluate</span>.</p>
+    <div class="row"><select id="lv-split"><option value="test_iid">Familiar wording</option><option value="test_ood">New wording</option></select><select id="lv-n"><option value="200">200 samples</option><option value="400" selected>400 samples</option></select><button class="btn" id="lv-go">Run</button><span class="err" id="lv-err"></span></div><div id="lv-out" style="margin-top:16px" class="scroll"></div>` : '';
+  if (syn) $('#lv-go').onclick = async () => {
+    const b = $('#lv-go'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Running'; $('#lv-err').textContent = '';
+    try {
+      const r = await api('/api/evaluate', {split: $('#lv-split').value, n: +$('#lv-n').value});
+      const T = [['both', 'Caption + photo'], ['text', 'Caption only'], ['image', 'Photo only']];
+      $('#lv-out').innerHTML = `<table><tr><th>${r.n} samples</th><th>Topic acc.</th><th>Topic F1</th><th>Feeling acc.</th><th>Feeling F1</th></tr>${T.map(([k, nm]) => { const x = r.result[k]; return `<tr class="${k === 'both' ? 'hl' : ''}"><td>${nm}</td><td>${f1(x.aspect.acc)}</td><td>${f1(x.aspect.f1)}</td><td>${f1(x.sentiment.acc)}</td><td>${f1(x.sentiment.f1)}</td></tr>`; }).join('')}</table>`;
+    } catch (e) { $('#lv-err').textContent = e.message; }
+    b.disabled = false; b.textContent = 'Run';
+  };
+}
+</script>
+</body>
+</html>

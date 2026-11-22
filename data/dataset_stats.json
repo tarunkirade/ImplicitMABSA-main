@@ -1,0 +1,122 @@
+{
+  "train": {
+    "n": 5600,
+    "aspect": {
+      "screen": 716,
+      "packaging": 717,
+      "performance": 740,
+      "delivery": 673,
+      "sound": 693,
+      "camera": 669,
+      "price": 702,
+      "battery": 690
+    },
+    "sentiment": {
+      "negative": 1841,
+      "neutral": 1843,
+      "positive": 1916
+    },
+    "aspect_source": {
+      "B": 2024,
+      "I": 1634,
+      "T": 1942
+    },
+    "sentiment_source": {
+      "T": 1718,
+      "I": 1685,
+      "B": 2197
+    },
+    "conflicts": 227,
+    "avg_words": 6.8
+  },
+  "val": {
+    "n": 800,
+    "aspect": {
+      "performance": 106,
+      "camera": 102,
+      "sound": 109,
+      "screen": 95,
+      "packaging": 101,
+      "delivery": 101,
+      "price": 103,
+      "battery": 83
+    },
+    "sentiment": {
+      "negative": 268,
+      "positive": 261,
+      "neutral": 271
+    },
+    "aspect_source": {
+      "B": 265,
+      "I": 243,
+      "T": 292
+    },
+    "sentiment_source": {
+      "B": 297,
+      "T": 256,
+      "I": 247
+    },
+    "conflicts": 41,
+    "avg_words": 6.8
+  },
+  "test_iid": {
+    "n": 800,
+    "aspect": {
+      "performance": 96,
+      "price": 104,
+      "screen": 93,
+      "battery": 98,
+      "packaging": 111,
+      "camera": 108,
+      "sound": 92,
+      "delivery": 98
+    },
+    "sentiment": {
+      "negative": 279,
+      "neutral": 249,
+      "positive": 272
+    },
+    "aspect_source": {
+      "I": 235,
+      "B": 282,
+      "T": 283
+    },
+    "sentiment_source": {
+      "B": 301,
+      "T": 261,
+      "I": 238
+    },
+    "conflicts": 27,
+    "avg_words": 6.84
+  },
+  "test_ood": {
+    "n": 800,
+    "aspect": {
+      "delivery": 109,
+      "camera": 100,
+      "battery": 101,
+      "packaging": 105,
+      "price": 120,
+      "sound": 92,
+      "performance": 80,
+      "screen": 93
+    },
+    "sentiment": {
+      "positive": 262,
+      "neutral": 257,
+      "negative": 281
+    },
+    "aspect_source": {
+      "B": 291,
+      "I": 239,
+      "T": 270
+    },
+    "sentiment_source": {
+      "B": 320,
+      "T": 233,
+      "I": 247
+    },
+    "conflicts": 34,
+    "avg_words": 7.7
+  }
+}
